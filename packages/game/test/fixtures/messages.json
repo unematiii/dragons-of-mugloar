@@ -1,0 +1,20 @@
+{
+  "messages": [
+    {
+      "adId": "MDEyMw==",
+      "message": "SGVsbG8=",
+      "reward": "100",
+      "expiresIn": 3,
+      "probability": "U3VyZSB0aGluZw==",
+      "encrypted": 1
+    },
+    {
+      "adId": "plain-task",
+      "message": "A plain task",
+      "reward": 75,
+      "expiresIn": 5,
+      "probability": "Hmmm....",
+      "encrypted": null
+    }
+  ]
+}

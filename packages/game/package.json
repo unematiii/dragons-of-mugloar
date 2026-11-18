@@ -1,0 +1,22 @@
+{
+  "name": "@mugloar/game",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@mugloar/contracts": "workspace:*",
+    "@sinclair/typebox": "^0.34.41"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "development": "./src/index.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "node --import tsx --test test/*.test.ts"
+  }
+}

@@ -1,0 +1,85 @@
+services:
+  db:
+    image: postgres:18.1-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-mugloar}
+      POSTGRES_USER: ${POSTGRES_USER:-mugloar}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mugloar}
+    volumes:
+      - mugloar-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    command: ['pnpm', '--filter', '@mugloar/db', 'migrate']
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-mugloar}:${POSTGRES_PASSWORD:-mugloar}@db:5432/${POSTGRES_DB:-mugloar}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: 'no'
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      API_PORT: 3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-mugloar}:${POSTGRES_PASSWORD:-mugloar}@db:5432/${POSTGRES_DB:-mugloar}
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
+      UPSTREAM_BASE_URL: ${UPSTREAM_BASE_URL:-https://dragonsofmugloar.com/api/v2}
+      NODE_ENV: production
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - '${WEB_PORT:-8080}:8080'
+    depends_on:
+      api:
+        condition: service_healthy
+
+  cli:
+    profiles: ['cli']
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    command: ['pnpm', '--filter', '@mugloar/cli', 'start']
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-mugloar}:${POSTGRES_PASSWORD:-mugloar}@db:5432/${POSTGRES_DB:-mugloar}
+      UPSTREAM_BASE_URL: ${UPSTREAM_BASE_URL:-https://dragonsofmugloar.com/api/v2}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  tooling:
+    profiles: ['tooling']
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+      target: build
+    command: ['pnpm', 'check']
+
+volumes:
+  mugloar-db:

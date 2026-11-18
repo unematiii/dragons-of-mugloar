@@ -1,0 +1,21 @@
+{
+  "name": "@mugloar/web",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@mugloar/contracts": "workspace:*",
+    "@mugloar/game": "workspace:*",
+    "@tanstack/vue-query": "^5.90.2",
+    "floating-vue": "^5.4.0",
+    "uuid": "^14.0.3",
+    "vue": "^3.5.45",
+    "vue-router": "^4.6.3"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "dev": "vite --host 0.0.0.0",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
+    "test": "node --import tsx --test test/*.test.ts",
+    "build": "vite build"
+  }
+}

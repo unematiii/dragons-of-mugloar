@@ -1,0 +1,21 @@
+FROM node:24.22.3-alpine3.24 AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN apk upgrade --no-cache && corepack enable
+WORKDIR /workspace
+
+FROM base AS build
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY apps ./apps
+COPY packages ./packages
+COPY tsconfig.base.json ./
+COPY .prettierrc.json .prettierignore eslint.config.js ./
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @mugloar/api... build
+RUN pnpm --filter @mugloar/cli... build
+
+FROM base AS runtime
+ENV NODE_ENV=production
+COPY --from=build /workspace /workspace
+EXPOSE 3000
+CMD ["pnpm", "--filter", "@mugloar/api", "start"]

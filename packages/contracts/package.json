@@ -1,0 +1,20 @@
+{
+  "name": "@mugloar/contracts",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@sinclair/typebox": "^0.34.41"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "development": "./src/index.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build": "tsc -p tsconfig.build.json"
+  }
+}

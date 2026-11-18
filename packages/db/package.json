@@ -1,0 +1,27 @@
+{
+  "name": "@mugloar/db",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "drizzle-orm": "^0.44.7",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.15.5",
+    "drizzle-kit": "^0.31.5"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "development": "./src/index.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build": "tsc -p tsconfig.build.json",
+    "migrate": "drizzle-kit migrate --config=drizzle.config.ts",
+    "migrate:local": "node --env-file=../../.env.example --env-file-if-exists=../../.env ./node_modules/drizzle-kit/bin.cjs migrate --config=drizzle.config.ts"
+  }
+}

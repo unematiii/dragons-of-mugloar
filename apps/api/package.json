@@ -1,0 +1,24 @@
+{
+  "name": "@mugloar/api",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/csrf-protection": "^8.0.2",
+    "@fastify/rate-limit": "^10.3.0",
+    "@fastify/type-provider-typebox": "^5.2.0",
+    "@mugloar/contracts": "workspace:*",
+    "@mugloar/db": "workspace:*",
+    "@mugloar/game": "workspace:*",
+    "@sinclair/typebox": "^0.34.41",
+    "fastify": "^5.6.2"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "node --conditions=development --import tsx --test test/*.test.ts",
+    "dev": "node --env-file=../../.env.example --env-file-if-exists=../../.env --conditions=development --import tsx --watch src/index.ts",
+    "start": "node dist/apps/api/src/index.js"
+  }
+}

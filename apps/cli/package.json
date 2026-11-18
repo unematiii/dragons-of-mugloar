@@ -1,0 +1,16 @@
+{
+  "name": "@mugloar/cli",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@mugloar/db": "workspace:*",
+    "@mugloar/game": "workspace:*",
+    "commander": "^14.0.3"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node --env-file-if-exists=../../.env dist/apps/cli/src/index.js"
+  }
+}
